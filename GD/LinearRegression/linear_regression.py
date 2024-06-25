@@ -4,6 +4,7 @@ from utils.features import prepare_for_training
 class LinearRegression:
     def __init__(self,data,labels,polynomial_degree = 0,sinusoid_degree = 0,normalize_data = 0):
         (data_processed, features_mean, features_deviation) = prepare_for_training(data,polynomial_degree = 0,sinusoid_degree = 0,normalize_data = 0)
+        
         #data_processed = 处理后的数据； features_mean = 数据均值； features_deviation = 数据标准差
 
         self.data = data_processed
