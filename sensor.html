@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<!-- by xuanzhi33 -->
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="theme-color" content="#e9f1e9">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sensor data</title>
+  <link href="https://unpkg.zhimg.com/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://www.xuanzhi33.cn/css/x-az.css" rel="stylesheet">
+  <link rel="icon" href="https://www.xuanzhi33.cn/favicon.ico">
+  <script>
+    var _hmt = _hmt || [];
+    (function () {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2a6aca6b85659d07cf5d9e5417c4a5f5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+</head>
+
+<body>
+  <br class="brBefore">
+  <br class="brBefore">
+  <div class="container" id="app"></div>
+  <br>
+  <br>
+
+  <template id="main">
+    <div class="card glass"> <br>
+      <div class="container">
+        <h5><a href="https://www.xuanzhi33.cn/" class="backBtn">Back</a></h5>
+        <h1 class="text-center">Sensor data</h1>
+
+        <div v-if="supported">
+          <h5>Acceleration</h5>
+          <p>
+            X: {{ acceleration.x.toFixed(1) }}<br>
+            Y: {{ acceleration.y.toFixed(1) }}<br>
+            Z: {{ acceleration.z.toFixed(1) }}
+          </p>
+          <h5>
+            Angular acceleration
+          </h5>
+          <p>
+            Alpha: {{ angularAcceleration.alpha.toFixed(1) }}<br>
+            Beta: {{ angularAcceleration.beta.toFixed(1) }}<br>
+            Gamma: {{ angularAcceleration.gamma.toFixed(1) }}
+          </p>
+          <div class="row">
+            <div class="col-6">
+              <h5>
+                Compass
+              </h5>
+              <p>
+                {{ directionText }}
+                {{ compass.toFixed(1) }}
+              </p>
+            </div>
+            <div class="col-6">
+              <h5>
+                GPS
+              </h5>
+              <p>
+                Longitude: {{ longitude }}<br>
+                Latitude: {{ latitude }}
+              </p>
+            </div>
+          </div>
+
+          <h3>Record</h3>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Interval (ms)</span>
+            </div>
+            <input v-model="recordInterval" type="number" class="form-control" placeholder="Interval in ms">
+            <div class="input-group-append">
+              <button @click="startRecord" class="btn btn-primary" v-if="!recording">
+                Start
+              </button>
+              <button @click="stopRecord" class="btn btn-danger" v-else>
+                Stop
+              </button>
+            </div>
+          </div>
+          <p>
+            Records Count: {{ records.length }}
+          </p>
+
+        </div>
+        <div v-else>
+          <p>
+            This device does not support the required sensors. Please try on a mobile device.
+          </p>
+        </div>
+      </div>
+      <br>
+    </div>
+  </template>
+
+  <script src="https://www.xuanzhi33.cn/js/global.v2.js"></script>
+  <script src="https://unpkg.zhimg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script type="module">
+    const { createApp } = Vue;
+    const app = createApp({
+      data() {
+        return {
+          acceleration: { x: 0, y: 0, z: 0 },
+          compass: 0,
+          angularAcceleration: { alpha: 0, beta: 0, gamma: 0 },
+          supported: false,
+          recordInterval: 1000,
+          recordTimerID: null,
+          records: [],
+          recording: false,
+          gps: { longitude: 0, latitude: 0 }
+        };
+      },
+      mounted() {
+        window.addEventListener('devicemotion', this.handleDeviceMotion);
+        window.addEventListener('deviceorientation', this.handleDeviceOrientation);
+        if (navigator.geolocation) {
+          navigator.geolocation.watchPosition((position) => {
+            this.gps = position.coords;
+            console.log(position.coords);
+            
+          }, (error) => {
+            console.error(error);
+          }, {
+            enableHighAccuracy: true, // 高精度
+            timeout: 5000,
+            maximumAge: 0 // 0表示不使用缓存
+          });
+        }
+      },
+      computed: {
+        directionText() {
+          const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+          return directions[Math.round(this.compass / 45) % 8];
+        }
+      },
+      methods: {
+        handleDeviceMotion(event) {
+          if (!event.accelerationIncludingGravity.x || !event.rotationRate.alpha) return;
+          this.supported = true;
+
+          this.acceleration = event.accelerationIncludingGravity;
+          this.angularAcceleration = event.rotationRate;
+        },
+        handleDeviceOrientation(event) {
+          if (!event.alpha) return;
+          this.compass = event.alpha;
+        },
+        startRecord() {
+          this.records = [];
+          this.recording = true;
+          this.recordTimerID = setInterval(() => {
+            this.records.push([
+              this.acceleration.x,
+              this.acceleration.y,
+              this.acceleration.z,
+              this.angularAcceleration.alpha,
+              this.angularAcceleration.beta,
+              this.angularAcceleration.gamma,
+              this.compass
+            ]);
+          }, this.recordInterval);
+        },
+        stopRecord() {
+          this.recording = false;
+          
+          clearInterval(this.recordTimerID);
+          // 生成csv
+          const csv = this.records.map(record => record.join(',')).join('\n');
+          const blob = new Blob([csv], { type: 'text/csv' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url
+          a.download = 'sensor_data.csv';
+          a.click();
+          alert("Data saved to sensor_data.csv. Please open it with Excel or other software.");
+        }
+      },
+      unmount() {
+        window.removeEventListener('devicemotion', this.handleDeviceMotion);
+        window.removeEventListener('deviceorientation', this.handleDeviceOrientation);
+      },
+      template: "#main"
+    });
+
+    app.mount("#app");
+  </script>
+</body>
+
+</html>
