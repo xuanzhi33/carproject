@@ -40,4 +40,16 @@ plt.plot(range(1,num_iterations+1),cost_history)
 plt.xlabel('迭代次数')
 plt.ylabel('损失')
 plt.title('线性回归')
+
+
+x_predictions = np.linspace(x_train.min(),x_train.max(),1000).reshape(-1,1)
+y_predictions = linear_regression.predict(x_predictions)
+
+plt.scatter(x_train,y_train,label='Training Data')
+plt.scatter(x_test,y_test,label='Testing Data')
+plt.plot(x_predictions,y_predictions,'r',label='Prediction')
+plt.xlabel(input_param_name)
+plt.ylabel(output_param_name)
+plt.title('Data')
+plt.legend()
 plt.show()
