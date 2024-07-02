@@ -8,7 +8,8 @@ app = Flask(__name__)
 allow_origins = [
     "https://www.xuanzhi33.cn",
     "https://xuanzhi33.cn",
-    "https://gh.xuanzhi33.cn"
+    "https://gh.xuanzhi33.cn",
+    "http://localhost:5500"
 ]
 
 def cors_response(data):
