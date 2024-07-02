@@ -7,7 +7,8 @@ app = Flask(__name__)
 
 allow_origins = [
     "https://www.xuanzhi33.cn",
-    "https://xuanzhi33.cn"
+    "https://xuanzhi33.cn",
+    "https://gh.xuanzhi33.cn"
 ]
 
 def cors_response(data):
