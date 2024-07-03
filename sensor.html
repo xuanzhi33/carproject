@@ -36,12 +36,26 @@
         <h1 class="text-center">Sensor data</h1>
 
         <div v-if="supported">
-          <h5>Acceleration</h5>
-          <p>
-            X: {{ acceleration.x.toFixed(1) }}<br>
-            Y: {{ acceleration.y.toFixed(1) }}<br>
-            Z: {{ acceleration.z.toFixed(1) }}
-          </p>
+          <div class="row">
+            <div class="col-6">
+              <h5>Acceleration</h5>
+              <p>
+                X: {{ acceleration.x.toFixed(1) }}<br>
+                Y: {{ acceleration.y.toFixed(1) }}<br>
+                Z: {{ acceleration.z.toFixed(1) }}
+              </p>
+            </div>
+            <div class="col-6">
+              <h5>
+                Compass
+              </h5>
+              <p>
+                {{ directionText }} <br>
+                {{ compass.toFixed(1) }}
+              </p>
+            </div>
+          </div>
+
           <h5>
             Angular acceleration
           </h5>
@@ -50,26 +64,15 @@
             Beta: {{ angularAcceleration.beta.toFixed(1) }}<br>
             Gamma: {{ angularAcceleration.gamma.toFixed(1) }}
           </p>
-          <div class="row">
-            <div class="col-6">
-              <h5>
-                Compass
-              </h5>
-              <p>
-                {{ directionText }}
-                {{ compass.toFixed(1) }}
-              </p>
-            </div>
-            <div class="col-6">
-              <h5>
-                GPS
-              </h5>
-              <p>
-                Longitude: {{ longitude }}<br>
-                Latitude: {{ latitude }}
-              </p>
-            </div>
-          </div>
+
+          <h5>
+            GPS
+          </h5>
+          <p>
+            Longitude: {{ gps.longitude }}<br>
+            Latitude: {{ gps.latitude }}<br>
+            Speed: {{ (gps.speed*3.6).toFixed(6) }} km/h
+          </p>
 
           <h3>Record</h3>
           <div class="input-group">
@@ -81,7 +84,8 @@
               <button @click="startRecord" class="btn btn-primary" v-if="!recording">
                 Start
               </button>
-              <button @click="stopRecord" class="btn btn-danger" v-else>
+              <button @click="stopRecord" class="btn btn-danger" v-else :disabled="uploading">
+                <span class="spinner-border spinner-border-sm" v-if="uploading"></span>
                 Stop
               </button>
             </div>
@@ -116,7 +120,8 @@
           recordTimerID: null,
           records: [],
           recording: false,
-          gps: { longitude: 0, latitude: 0 }
+          gps: { longitude: 0, latitude: 0, speed: 0 },
+          uploading: false
         };
       },
       mounted() {
@@ -124,9 +129,7 @@
         window.addEventListener('deviceorientation', this.handleDeviceOrientation);
         if (navigator.geolocation) {
           navigator.geolocation.watchPosition((position) => {
-            this.gps = position.coords;
-            console.log(position.coords);
-            
+            this.gps = position.coords;            
           }, (error) => {
             console.error(error);
           }, {
@@ -156,6 +159,19 @@
         },
         startRecord() {
           this.records = [];
+          this.records.push([
+            'Acceleration X',
+            'Acceleration Y',
+            'Acceleration Z',
+            'Angular Acceleration Alpha',
+            'Angular Acceleration Beta',
+            'Angular Acceleration Gamma',
+            'Compass',
+            'Longitude',
+            'Latitude',
+            'Speed'
+          ]);
+
           this.recording = true;
           this.recordTimerID = setInterval(() => {
             this.records.push([
@@ -165,23 +181,46 @@
               this.angularAcceleration.alpha,
               this.angularAcceleration.beta,
               this.angularAcceleration.gamma,
-              this.compass
+              this.compass,
+              this.gps.longitude,
+              this.gps.latitude,
+              this.gps.speed
             ]);
           }, this.recordInterval);
         },
-        stopRecord() {
+        async stopRecord() {
           this.recording = false;
           
           clearInterval(this.recordTimerID);
           // 生成csv
-          const csv = this.records.map(record => record.join(',')).join('\n');
-          const blob = new Blob([csv], { type: 'text/csv' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url
-          a.download = 'sensor_data.csv';
-          a.click();
-          alert("Data saved to sensor_data.csv. Please open it with Excel or other software.");
+          // const csv = this.records.map(record => record.join(',')).join('\n');
+          // const blob = new Blob([csv], { type: 'text/csv' });
+          // const url = URL.createObjectURL(blob);
+          // const a = document.createElement('a');
+          // a.href = url
+          // a.download = 'sensor_data.csv';
+          // a.click();
+          // alert("Data saved to sensor_data.csv. Please open it with Excel or other software.");
+
+          const name = prompt("Please enter the data name", "data");
+
+          this.uploading = true;
+          const res = await fetch("https://s.x-33.top/carproject/api/insert", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              data: this.records,
+              user: name
+            })
+          });
+          const resData = res.json();
+          if (resData.code == 200) {
+            alert("Data uploaded successfully. Thanks!");
+          }
+          this.uploading = false;
+          
         }
       },
       unmount() {
