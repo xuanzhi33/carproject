@@ -97,7 +97,7 @@
         </div>
         <div v-else>
           <p>
-            This device does not support the required sensors. Please try on a mobile device.
+            This device does not support the required sensors. Please <span @click="supported = true">try</span> on a mobile device.
           </p>
         </div>
       </div>
@@ -116,7 +116,7 @@
           compass: 0,
           angularAcceleration: { alpha: 0, beta: 0, gamma: 0 },
           supported: false,
-          recordInterval: 1000,
+          recordInterval: 200,
           recordTimerID: null,
           records: [],
           recording: false,
@@ -189,7 +189,6 @@
           }, this.recordInterval);
         },
         async stopRecord() {
-          this.recording = false;
           
           clearInterval(this.recordTimerID);
           // 生成csv
@@ -221,6 +220,8 @@
           }
           this.uploading = false;
           
+          this.recording = false;
+
         }
       },
       unmount() {
