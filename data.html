@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<!-- by xuanzhi33 -->
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="theme-color" content="#e9f1e9">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data</title>
+  <link href="https://unpkg.zhimg.com/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://www.xuanzhi33.cn/css/x-az.css" rel="stylesheet">
+  <link rel="icon" href="https://www.xuanzhi33.cn/favicon.ico">
+  <style>
+    .v-enter-active,
+    .v-leave-active {
+      transition: all 0.3s;
+    }
+
+    .v-enter-from,
+    .v-leave-to {
+      opacity: 0;
+      transform: translateY(50px);
+    }
+  </style>
+  <script>
+    var _hmt = _hmt || [];
+    (function () {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2a6aca6b85659d07cf5d9e5417c4a5f5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+</head>
+
+<body>
+  <br class="brBefore">
+  <br class="brBefore">
+  <div class="container" id="app"></div>
+  <br>
+  <br>
+
+  <template id="main">
+    <div class="card glass"> <br>
+      <div class="container">
+        <h1 class="text-center">Data</h1>
+        <table class="table mt-3">
+          <thead>
+            <tr>
+              <th>
+                ID
+              </th>
+              <th>
+                Name
+              </th>
+              <th>
+                Date
+              </th>
+              <th>
+                Excel
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <template v-if="loading">
+              <tr>
+                <td colspan="4" class="text-center">
+                  <span class="spinner-border spinner-border-sm"></span>
+                  Loading...
+                </td>
+              </tr>
+            </template>
+            <template v-else-if="data.length == 0">
+              <tr>
+                <td colspan="4" class="text-center">
+                  No data
+                </td>
+              </tr>
+            </template>
+            <template v-else>
+              <tr v-for="item in data">
+                <td>
+                  {{ item.id }}
+                </td>
+                <td>
+                  {{ item.user }}
+                </td>
+                <td>
+                  {{ item.date }}
+                </td>
+                <td>
+                  <a href="#" @click.prevent="makeCSV(item.data, item.user)">Download</a>
+                </td>
+              </tr>
+            </template>
+
+          </tbody>
+        </table>
+        <a href="#" @click.prevent="getData">Refresh</a>
+      </div>
+      <br>
+    </div>
+  </template>
+
+  <script src="https://www.xuanzhi33.cn/js/global.v2.js"></script>
+  <script src="https://unpkg.zhimg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script type="module">
+    const { createApp } = Vue;
+
+
+    const app = createApp({
+      data() {
+        return {
+          data: [],
+          loading: true
+        }
+      },
+      async mounted() {
+        await this.getData();
+      },
+      methods: {
+        async getData() {
+          this.loading = true;
+          const res = await fetch("https://s.x-33.top/carproject/api/get", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              page: 1,
+              perPage: 1000
+            })
+          });
+          const data = await res.json();
+          if (data.code == 200) {
+            this.data = data.data;
+          } else {
+            alert("Error");
+          }
+          this.loading = false;
+        },
+        async makeCSV(textData, fileName) {
+          const records = JSON.parse(textData);
+          const csv = records.map(record => record.join(',')).join('\n');
+          const blob = new Blob([csv], { type: 'text/csv' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${fileName}.csv`;
+          a.click();
+        }
+      },
+      template: "#main"
+    });
+
+    app.mount("#app");
+  </script>
+</body>
+
+</html>
