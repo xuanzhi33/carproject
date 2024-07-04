@@ -12,7 +12,7 @@ def cors_response(data):
     return response
 
 
-@app.route('/api/insert', methods=['POST'])
+@app.route('/api/insert', methods=['POST', 'OPTIONS'])
 def insert():
     data = request.json
     store.insert(data['user'], data['data'])
@@ -21,7 +21,7 @@ def insert():
         'msg': 'success'
     })
 
-@app.route('/api/get', methods=['POST'])
+@app.route('/api/get', methods=['POST', 'OPTIONS'])
 def get():
     data = request.json
     if 'page' not in data or 'perPage' not in data:
