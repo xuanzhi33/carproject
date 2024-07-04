@@ -14,3 +14,8 @@ Software: By developing simple-function apps for both Android and iOS or a webvi
 Hardware: We will seek more suitable sensors to detect issues related to sudden lane changes and braking by drivers.
 
 **B.** Detect whether the driver is fatigued by observing the driver's facial features, eye signals, and head movements. This branch involves Artificial Intelligence (AI), and the feasibility and implementation methods (i.e., innovative points) will be discussed in the group meeting.
+
+## Links
+
+- [Sensor Data Collection](https://gh.xuanzhi33.cn/carproject/sensor.html)
+- [Data Download](https://gh.xuanzhi33.cn/carproject/data.html)
