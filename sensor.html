@@ -210,11 +210,12 @@
               "Content-Type": "application/json"
             },
             body: JSON.stringify({
-              data: this.records,
+              data: JSON.stringify(this.records),
               user: name
             })
           });
-          const resData = res.json();
+          const resData = await res.json();
+
           if (resData.code == 200) {
             alert("Data uploaded successfully. Thanks!");
           }
