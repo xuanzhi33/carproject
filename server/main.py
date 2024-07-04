@@ -9,6 +9,7 @@ app = Flask(__name__)
 def cors_response(data):    
     response = make_response(jsonify(data))
     response.headers['Access-Control-Allow-Origin'] = "*"
+    response.headers['Access-Control-Allow-Headers'] = "Content-Type"
     return response
 
 @app.before_request
