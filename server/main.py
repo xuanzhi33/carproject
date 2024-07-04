@@ -11,6 +11,10 @@ def cors_response(data):
     response.headers['Access-Control-Allow-Origin'] = "*"
     return response
 
+@app.before_request
+def before_request():
+    if request.method == 'OPTIONS':
+        return cors_response({}), 204
 
 @app.route('/api/insert', methods=['POST', 'OPTIONS'])
 def insert():
