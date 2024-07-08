@@ -7,10 +7,25 @@
   <meta name="theme-color" content="#e9f1e9">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sensor data</title>
+  <title>Sensor data collection</title>
+  <link rel="manifest" href="./assets/manifest.json">
   <link href="https://unpkg.zhimg.com/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="https://www.xuanzhi33.cn/css/x-az.css" rel="stylesheet">
   <link rel="icon" href="https://www.xuanzhi33.cn/favicon.ico">
+  <style>
+    .v-enter-active,
+    .v-leave-active {
+      transition: all 0.3s;
+    }
+    
+    .v-enter-from,
+    .v-leave-to {
+      opacity: 0;
+      transform: translateY(50px);
+    }
+  </style>
   <script>
     var _hmt = _hmt || [];
     (function () {
@@ -32,13 +47,29 @@
   <template id="main">
     <div class="card glass"> <br>
       <div class="container">
-        <h5><a href="https://www.xuanzhi33.cn/" class="backBtn">Back</a></h5>
         <h1 class="text-center">Sensor data</h1>
 
         <div v-if="supported">
+          <transition>
+            <div v-if="!showAdvanced" class="my-3">
+              <button @click="startRecord" class="btn btn-primary btn-block btn-lg" v-if="!recording">
+                <i class="fa fa-play"></i>
+                Start Recording
+              </button>
+              <button @click="stopRecord" class="btn btn-success btn-block btn-lg" v-else :disabled="uploading">
+                <i class="fa fa-check"></i>
+                Finish & Upload
+                <span class="spinner-border spinner-border-sm" v-if="uploading"></span>
+              </button>
+            </div>
+          </transition>
+
           <div class="row">
             <div class="col-6">
-              <h5>Acceleration</h5>
+              <h5>
+                <i class="fa fa-tachometer fa-fw"></i>
+                Acceleration
+              </h5>
               <p>
                 X: {{ acceleration.x.toFixed(1) }}<br>
                 Y: {{ acceleration.y.toFixed(1) }}<br>
@@ -47,6 +78,7 @@
             </div>
             <div class="col-6">
               <h5>
+                <i class="fa fa-compass fa-fw"></i>
                 Compass
               </h5>
               <p>
@@ -57,6 +89,7 @@
           </div>
 
           <h5>
+            <i class="fa fa-rotate-right fa-fw"></i>
             Angular acceleration
           </h5>
           <p>
@@ -66,6 +99,7 @@
           </p>
 
           <h5>
+            <i class="fa fa-map-marker fa-fw"></i>
             GPS
           </h5>
           <p>
@@ -74,30 +108,49 @@
             Speed: {{ (gps.speed*3.6).toFixed(6) }} km/h
           </p>
 
-          <h3>Record</h3>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text">Interval (ms)</span>
+          <a href="#" @click.prevent="showAdvanced = !showAdvanced">
+            <i class="fa fa-cog fa-fw"></i>
+            Advanced
+          </a> &nbsp;
+          <a href="https://github.com/xuanzhi33/carproject" target="_blank">
+            <i class="fa fa-github fa-fw"></i>
+            Repository
+          </a> &nbsp;
+          <a href="#" @click.prevent="showAbout">
+            <i class="fa fa-info-circle fa-fw"></i>
+            About
+          </a>
+
+          <transition>
+            <div v-if="showAdvanced">
+              <h3>Record</h3>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Interval (ms)</span>
+                </div>
+                <input v-model="recordInterval" type="number" class="form-control" placeholder="Interval in ms">
+                <div class="input-group-append">
+                  <button @click="startRecord" class="btn btn-primary" v-if="!recording">
+                    Start
+                  </button>
+                  <button @click="stopRecord" class="btn btn-danger" v-else :disabled="uploading">
+                    <span class="spinner-border spinner-border-sm" v-if="uploading"></span>
+                    Stop
+                  </button>
+                </div>
+              </div>
+              <p>
+                Records Count: {{ records.length }}
+              </p>
             </div>
-            <input v-model="recordInterval" type="number" class="form-control" placeholder="Interval in ms">
-            <div class="input-group-append">
-              <button @click="startRecord" class="btn btn-primary" v-if="!recording">
-                Start
-              </button>
-              <button @click="stopRecord" class="btn btn-danger" v-else :disabled="uploading">
-                <span class="spinner-border spinner-border-sm" v-if="uploading"></span>
-                Stop
-              </button>
-            </div>
-          </div>
-          <p>
-            Records Count: {{ records.length }}
-          </p>
+          </transition>
+
 
         </div>
         <div v-else>
           <p>
-            This device does not support the required sensors. Please <span @click="supported = true">try</span> on a mobile device.
+            This device does not support the required sensors. Please <span @click="supported = true">try</span> on a
+            mobile device.
           </p>
         </div>
       </div>
@@ -105,7 +158,7 @@
     </div>
   </template>
 
-  <script src="https://www.xuanzhi33.cn/js/global.v2.js"></script>
+  <script src="https://www.xuanzhi33.cn/js/global.v2.js" data-sendinfo="no"></script>
   <script src="https://unpkg.zhimg.com/vue@3/dist/vue.global.prod.js"></script>
   <script type="module">
     const { createApp } = Vue;
@@ -121,7 +174,8 @@
           records: [],
           recording: false,
           gps: { longitude: 0, latitude: 0, speed: 0 },
-          uploading: false
+          uploading: false,
+          showAdvanced: false
         };
       },
       mounted() {
@@ -129,7 +183,7 @@
         window.addEventListener('deviceorientation', this.handleDeviceOrientation);
         if (navigator.geolocation) {
           navigator.geolocation.watchPosition((position) => {
-            this.gps = position.coords;            
+            this.gps = position.coords;
           }, (error) => {
             console.error(error);
           }, {
@@ -138,6 +192,8 @@
             maximumAge: 0 // 0表示不使用缓存
           });
         }
+
+        navigator.serviceWorker.register('./assets/sw.js');
       },
       computed: {
         directionText() {
@@ -189,7 +245,7 @@
           }, this.recordInterval);
         },
         async stopRecord() {
-          
+
           clearInterval(this.recordTimerID);
           // 生成csv
           // const csv = this.records.map(record => record.join(',')).join('\n');
@@ -202,6 +258,12 @@
           // alert("Data saved to sensor_data.csv. Please open it with Excel or other software.");
 
           const name = prompt("Please enter the data name", "data");
+
+          if (!name) {
+            alert("Data upload canceled.");
+            this.recording = false;
+            return;
+          }
 
           this.uploading = true;
           const res = await fetch("https://s.x-33.top/carproject/api/insert", {
@@ -217,12 +279,16 @@
           const resData = await res.json();
 
           if (resData.code == 200) {
-            alert("Data uploaded successfully. Thanks!");
+            const count = this.records.length - 1;
+            alert(`Data uploaded successfully. Thanks!\nTotal records: ${count}`);
           }
           this.uploading = false;
-          
+
           this.recording = false;
 
+        },
+        showAbout() {
+          alert("Sensor Data collection\nby Anzhi XU (xuanzhi33)\n\nThis is an open-source project under GPL-3.0 License.\ngithub.com/xuanzhi33/carproject");
         }
       },
       unmount() {
