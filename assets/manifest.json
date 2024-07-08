@@ -1,0 +1,14 @@
+{
+    "name": "Sensor data collection",
+    "start_url": "https://gh.xuanzhi33.cn/sensor.html",
+    "display": "standalone",
+    "background_color": "#e9f1e9",
+    "theme_color": "#e9f1e9",
+    "icons": [
+        {
+            "src": "https://gh.xuanzhi33.cn/assets/logo.webp",
+            "sizes": "192x192",
+            "type": "image/webp"
+        }
+    ]
+}
