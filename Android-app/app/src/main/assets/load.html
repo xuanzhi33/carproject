@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<!-- by xuanzhi33 -->
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#e9f1e9">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Loading</title>
+    <link href="./bootstrap.min.css" rel="stylesheet">
+    <link href="./x-az.css" rel="stylesheet">
+    <style>
+        .v-enter-active,
+        .v-leave-active {
+            transition: all 0.3s;
+        }
+
+        .v-enter-from,
+        .v-leave-to {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+    </style>
+</head>
+
+<body>
+    <br class="brBefore">
+    <br class="brBefore">
+    <div class="container" id="app"></div>
+    <br>
+    <br>
+
+    <template id="main">
+        <transition appear>
+            <div class="card glass" v-if="show"> <br>
+                <div class="container">
+                    <h1 class="text-center mb-3">Sensor Data</h1>
+                    <div>
+                        This APP can collect sensor data from your phone and use it for the Car Project.
+                    </div>
+                    <div class="mt-5 text-center text-success">
+                        <span class="spinner-border spinner-border-sm"></span> Loading...
+                    </div>
+                    <div class="text-right mt-5">
+                       Andriod APP by Anzhi XU (xuanzhi33)
+                    </div>
+                </div>
+                <br>
+            </div>
+        </transition>
+
+    </template>
+
+    <script src="./vue.global.prod.js"></script>
+    <script type="module">
+        const { createApp } = Vue;
+        const app = createApp({
+            data() { return {
+                show: true
+            } },
+            async mounted() {
+                await new Promise(resolve => setTimeout(resolve, 200));
+                location.href = "https://gh.xuanzhi33.cn/carproject/sensor.html";
+            },
+            template: "#main"
+        });
+
+        app.mount("#app");
+    </script>
+</body>
+
+</html>

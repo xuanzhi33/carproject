@@ -1,0 +1,120 @@
+body{
+    background: #e9f1e9;
+    transition: all 0.3s;
+}
+a{
+    color: #296324;
+}
+a:not(.btn):hover{
+    text-decoration: none;
+    border-bottom: 2px solid #296324;
+    color: #296324;
+    transition: none;
+}
+.navbar, .modal-content{
+    background: #e9f1e9aa;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+.glass{
+    border: 2px solid #296324;
+    line-height: 2;
+    border-radius: 0px;
+    transition: all 0.3s;
+}
+.darkMode{
+    display: none;
+}
+
+
+
+.backBtn {
+    position: absolute;
+    transition: all 0.5s;
+}
+
+.row .backBtn, .backBtnUp {
+    top: -45px;
+    left: -15px;
+}
+
+
+@media (max-width: 576px) {
+    .backBtn {
+        top: -45px;
+        left: -15px;
+    }
+}
+
+@media (prefers-color-scheme: dark){
+    .darkMode{
+        display: inline;
+    }
+    img[src="./logo.png"]{
+        display: none;
+    }
+    body{
+        background: #202420;
+        color: #eee;
+    }
+    .navbar, .modal-content{
+        background: #202420aa;
+    }
+    .navbar-brand,.nav-link,table,.btn[disabled]{
+        color: #eee!important;
+    }
+    .table-hover tbody tr:hover {
+        color: white;
+        background: #202420;
+    }
+    .form-control,.form-control:focus,.form-control[readonly]{
+        color: #eee;
+        background: #202420;
+    }
+    .table-success, .table-success>td, .table-success>th{
+        background: #202420;
+    }
+    a{
+        color: #95ad95;
+    }
+    a:not(.btn):hover{
+        border-bottom: 2px solid #95ad95;
+        color: #95ad95;
+    }
+    .glass{
+        border: 2px solid #95ad95;
+        background: black;
+    }
+    .btn {
+        color: white;
+    }
+    .btn-light {
+        color: black;
+    }
+
+
+
+}
+
+.backBtn:not(.btn):hover {
+    border: none;
+    transform: translateX(-7px);
+    transition: all 0.2s;
+}
+
+
+
+.btn,.form-control,.input-group-text,.badge,.alert{
+    border-radius: 0px;  
+}
+
+
+
+
+.glass {
+    display: block;
+}
+
+:root {
+    color-scheme: light dark;
+}
