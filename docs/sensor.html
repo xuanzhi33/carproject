@@ -19,7 +19,7 @@
     .v-leave-active {
       transition: all 0.3s;
     }
-    
+
     .v-enter-from,
     .v-leave-to {
       opacity: 0;
@@ -45,121 +45,123 @@
   <br>
 
   <template id="main">
-    <div class="card glass"> <br>
-      <div class="container">
-        <h1 class="text-center">Sensor data</h1>
+    <transition appear>
+      <div class="card glass"> <br>
+        <div class="container">
+          <h1 class="text-center">Sensor data</h1>
 
-        <div v-if="supported">
-          <transition>
-            <div v-if="!showAdvanced" class="my-3">
-              <button @click="startRecord" class="btn btn-primary btn-block btn-lg" v-if="!recording">
-                <i class="fa fa-play"></i>
-                Start Recording
-              </button>
-              <button @click="stopRecord" class="btn btn-success btn-block btn-lg" v-else :disabled="uploading">
-                <i class="fa fa-check"></i>
-                Finish & Upload
-                <span class="spinner-border spinner-border-sm" v-if="uploading"></span>
-              </button>
-            </div>
-          </transition>
-
-          <div class="row">
-            <div class="col-6">
-              <h5>
-                <i class="fa fa-tachometer"></i>
-                Acceleration
-              </h5>
-              <p>
-                X: {{ acceleration.x.toFixed(1) }}<br>
-                Y: {{ acceleration.y.toFixed(1) }}<br>
-                Z: {{ acceleration.z.toFixed(1) }}
-              </p>
-            </div>
-            <div class="col-6">
-              <h5>
-                <i class="fa fa-compass"></i>
-                Compass
-              </h5>
-              <p>
-                {{ directionText }} <br>
-                {{ compass.toFixed(1) }}
-              </p>
-            </div>
-          </div>
-
-          <h5>
-            <i class="fa fa-rotate-right"></i>
-            Angular acceleration
-          </h5>
-          <p>
-            Alpha: {{ angularAcceleration.alpha.toFixed(1) }}<br>
-            Beta: {{ angularAcceleration.beta.toFixed(1) }}<br>
-            Gamma: {{ angularAcceleration.gamma.toFixed(1) }}
-          </p>
-
-          <h5>
-            <i class="fa fa-map-marker"></i>
-            GPS
-          </h5>
-          <p>
-            Longitude: {{ gps.longitude }}<br>
-            Latitude: {{ gps.latitude }}<br>
-            Speed: {{ (gps.speed*3.6).toFixed(6) }} km/h
-          </p>
-
-          <a href="#" @click.prevent="showAdvanced = !showAdvanced">
-            <i class="fa fa-cog"></i>
-            Advanced
-          </a> &nbsp;
-          <a href="https://github.com/xuanzhi33/carproject" target="_blank">
-            <i class="fa fa-github"></i>
-            Repository
-          </a> &nbsp;
-          <a href="#" @click.prevent="showAbout">
-            <i class="fa fa-info-circle"></i>
-            About
-          </a>
-
-          <transition>
-            <div v-if="showAdvanced">
-              <h3>Record</h3>
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">Interval (ms)</span>
-                </div>
-                <input v-model="recordInterval" type="number" class="form-control" placeholder="Interval in ms">
-                <div class="input-group-append">
-                  <button @click="startRecord" class="btn btn-primary" v-if="!recording">
-                    Start
-                  </button>
-                  <button @click="stopRecord" class="btn btn-danger" v-else :disabled="uploading">
-                    <span class="spinner-border spinner-border-sm" v-if="uploading"></span>
-                    Stop
-                  </button>
-                </div>
+          <div v-if="supported">
+            <transition>
+              <div v-if="!showAdvanced" class="my-3">
+                <button @click="startRecord" class="btn btn-primary btn-block btn-lg" v-if="!recording">
+                  <i class="fa fa-play"></i>
+                  Start Recording
+                </button>
+                <button @click="stopRecord" class="btn btn-success btn-block btn-lg" v-else :disabled="uploading">
+                  <i class="fa fa-check"></i>
+                  Finish & Upload
+                  <span class="spinner-border spinner-border-sm" v-if="uploading"></span>
+                </button>
               </div>
-              <p>
-                Records Count: {{ records.length }}
-              </p>
-              <a href="javascript:location.reload();">
-                <i class="fa fa-refresh"></i>
-                Update APP
-              </a>
+            </transition>
+
+            <div class="row">
+              <div class="col-6">
+                <h5>
+                  <i class="fa fa-tachometer"></i>
+                  Acceleration
+                </h5>
+                <p>
+                  X: {{ acceleration.x.toFixed(1) }}<br>
+                  Y: {{ acceleration.y.toFixed(1) }}<br>
+                  Z: {{ acceleration.z.toFixed(1) }}
+                </p>
+              </div>
+              <div class="col-6">
+                <h5>
+                  <i class="fa fa-compass"></i>
+                  Compass
+                </h5>
+                <p>
+                  {{ directionText }} <br>
+                  {{ compass.toFixed(1) }}
+                </p>
+              </div>
             </div>
-          </transition>
+
+            <h5>
+              <i class="fa fa-rotate-right"></i>
+              Angular acceleration
+            </h5>
+            <p>
+              Alpha: {{ angularAcceleration.alpha.toFixed(1) }}<br>
+              Beta: {{ angularAcceleration.beta.toFixed(1) }}<br>
+              Gamma: {{ angularAcceleration.gamma.toFixed(1) }}
+            </p>
+
+            <h5>
+              <i class="fa fa-map-marker"></i>
+              GPS
+            </h5>
+            <p>
+              Longitude: {{ gps.longitude }}<br>
+              Latitude: {{ gps.latitude }}<br>
+              Speed: {{ (gps.speed*3.6).toFixed(6) }} km/h
+            </p>
+
+            <a href="#" @click.prevent="showAdvanced = !showAdvanced">
+              <i class="fa fa-cog"></i>
+              Advanced
+            </a> &nbsp;
+            <a href="https://github.com/xuanzhi33/carproject" target="_blank">
+              <i class="fa fa-github"></i>
+              Repository
+            </a> &nbsp;
+            <a href="#" @click.prevent="showAbout">
+              <i class="fa fa-info-circle"></i>
+              About
+            </a>
+
+            <transition>
+              <div v-if="showAdvanced">
+                <h3>Record</h3>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Interval (ms)</span>
+                  </div>
+                  <input v-model="recordInterval" type="number" class="form-control" placeholder="Interval in ms">
+                  <div class="input-group-append">
+                    <button @click="startRecord" class="btn btn-primary" v-if="!recording">
+                      Start
+                    </button>
+                    <button @click="stopRecord" class="btn btn-danger" v-else :disabled="uploading">
+                      <span class="spinner-border spinner-border-sm" v-if="uploading"></span>
+                      Stop
+                    </button>
+                  </div>
+                </div>
+                <p>
+                  Records Count: {{ records.length }}
+                </p>
+                <a href="javascript:location.reload();">
+                  <i class="fa fa-refresh"></i>
+                  Update APP
+                </a>
+              </div>
+            </transition>
 
 
+          </div>
+          <div v-else>
+            <p>
+              This device does not support the required sensors. Please <span @click="supported = true">try</span> on a
+              mobile device.
+            </p>
+          </div>
         </div>
-        <div v-else>
-          <p>
-            This device does not support the required sensors. Please <span @click="supported = true">try</span> on a
-            mobile device.
-          </p>
-        </div>
+        <br>
       </div>
-      <br>
-    </div>
+    </transition>
   </template>
 
   <script src="https://www.xuanzhi33.cn/js/global.v2.js" data-sendinfo="no"></script>
