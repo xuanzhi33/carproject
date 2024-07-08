@@ -67,7 +67,7 @@
           <div class="row">
             <div class="col-6">
               <h5>
-                <i class="fa fa-tachometer fa-fw"></i>
+                <i class="fa fa-tachometer"></i>
                 Acceleration
               </h5>
               <p>
@@ -78,7 +78,7 @@
             </div>
             <div class="col-6">
               <h5>
-                <i class="fa fa-compass fa-fw"></i>
+                <i class="fa fa-compass"></i>
                 Compass
               </h5>
               <p>
@@ -89,7 +89,7 @@
           </div>
 
           <h5>
-            <i class="fa fa-rotate-right fa-fw"></i>
+            <i class="fa fa-rotate-right"></i>
             Angular acceleration
           </h5>
           <p>
@@ -99,7 +99,7 @@
           </p>
 
           <h5>
-            <i class="fa fa-map-marker fa-fw"></i>
+            <i class="fa fa-map-marker"></i>
             GPS
           </h5>
           <p>
@@ -109,15 +109,15 @@
           </p>
 
           <a href="#" @click.prevent="showAdvanced = !showAdvanced">
-            <i class="fa fa-cog fa-fw"></i>
+            <i class="fa fa-cog"></i>
             Advanced
           </a> &nbsp;
           <a href="https://github.com/xuanzhi33/carproject" target="_blank">
-            <i class="fa fa-github fa-fw"></i>
+            <i class="fa fa-github"></i>
             Repository
           </a> &nbsp;
           <a href="#" @click.prevent="showAbout">
-            <i class="fa fa-info-circle fa-fw"></i>
+            <i class="fa fa-info-circle"></i>
             About
           </a>
 
@@ -142,6 +142,10 @@
               <p>
                 Records Count: {{ records.length }}
               </p>
+              <a href="javascript:location.reload();">
+                <i class="fa fa-refresh"></i>
+                Update APP
+              </a>
             </div>
           </transition>
 
