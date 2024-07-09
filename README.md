@@ -19,3 +19,28 @@ Hardware: We will seek more suitable sensors to detect issues related to sudden 
 
 - [Sensor Data Collection](https://gh.xuanzhi33.cn/carproject/sensor.html)
 - [Data Download](https://gh.xuanzhi33.cn/carproject/data.html)
+
+## Project Structure Overview
+
+This repository is organized into several directories, each serving a specific purpose within the project:
+
+### docs/
+
+The `docs/` directory contains frontend pages and documents that are intended to be deployed on the server. These pages likely serve as the user interface or documentation for the project.
+
+### server/
+
+The `server/` directory hosts the backend code responsible for data collection. This includes scripts, APIs, or services that gather and process data from various sources.
+
+### data/
+
+In the `data/` directory, you will find an SQLite3 database used for storing the collected data. This database likely stores structured data that has been gathered by the server-side components.
+
+### gd/
+
+The `gd/` directory houses machine learning algorithms and related code. This includes models, training scripts, or utilities used for analyzing or predicting data based on machine learning techniques.
+
+### Android-app/
+
+The `Android-app/` directory contains the complete source code for an Android application associated with the project. This includes both frontend UI components and backend logic specific to the mobile platform.
+
