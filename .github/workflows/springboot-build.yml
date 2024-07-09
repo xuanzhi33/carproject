@@ -1,0 +1,32 @@
+name: Build and Release Spring Boot Project
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'server/java/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK 22
+      uses: actions/setup-java@v4
+      with:
+        java-version: '22'
+        distribution: 'adopt'
+
+    - name: Build with Maven
+      run: mvn package --file server/java/carproject-server/pom.xml
+
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          server/java/carproject-server/target/carproject-server-*.jar
+        tag_name: v0.0.1-SNAPSHOT
