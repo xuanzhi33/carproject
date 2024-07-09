@@ -19,6 +19,7 @@ Hardware: We will seek more suitable sensors to detect issues related to sudden 
 
 - [Sensor Data Collection](https://gh.xuanzhi33.cn/carproject/sensor.html)
 - [Data Download](https://gh.xuanzhi33.cn/carproject/data.html)
+- [Android APK Download](https://gh.xuanzhi33.cn/carproject/assets/app-release.apk)
 
 ## Project Structure Overview
 
