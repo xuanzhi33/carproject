@@ -7,7 +7,6 @@ import cn.xuanzhi33.carprojectserver.service.SensorDataService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")

@@ -6,7 +6,6 @@ import cn.xuanzhi33.carprojectserver.pojo.SensorData;
 import cn.xuanzhi33.carprojectserver.service.SensorDataService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 public class SensorDataServiceImpl implements SensorDataService {
