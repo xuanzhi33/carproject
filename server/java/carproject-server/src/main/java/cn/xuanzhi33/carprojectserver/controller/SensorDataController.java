@@ -4,7 +4,9 @@ package cn.xuanzhi33.carprojectserver.controller;
 import cn.xuanzhi33.carprojectserver.pojo.*;
 import cn.xuanzhi33.carprojectserver.service.SensorDataService;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -20,14 +22,9 @@ public class SensorDataController {
 
     @PostMapping("/get")
     @CrossOrigin(origins = "*")
-    public Result<PagedSensorDataVO> getData(@RequestBody PageInfoDTO pageInfoDTO) {
+    public Result<PagedSensorDataVO> getData(@Valid @RequestBody PageInfoDTO pageInfoDTO) {
         int page = pageInfoDTO.getPage();
         int pageSize = pageInfoDTO.getPageSize();
-
-        if (pageSize > 100) {
-            return Result.clientError("pageSize should be less than 100");
-        }
-
 
         return Result.success(dataService.getPagedData(page, pageSize));
     }
