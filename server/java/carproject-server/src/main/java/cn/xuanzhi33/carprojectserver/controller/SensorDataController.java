@@ -1,9 +1,7 @@
 package cn.xuanzhi33.carprojectserver.controller;
 
 
-import cn.xuanzhi33.carprojectserver.pojo.Result;
-import cn.xuanzhi33.carprojectserver.pojo.SensorData;
-import cn.xuanzhi33.carprojectserver.pojo.SensorDataDTO;
+import cn.xuanzhi33.carprojectserver.pojo.*;
 import cn.xuanzhi33.carprojectserver.service.SensorDataService;
 
 import org.springframework.beans.BeanUtils;
@@ -23,8 +21,16 @@ public class SensorDataController {
 
     @PostMapping("/get")
     @CrossOrigin(origins = "*")
-    public Result<List<SensorData>> getData() {
-        return Result.success(dataService.getData());
+    public Result<PagedSensorDataVO> getData(@RequestBody PageInfoDTO pageInfoDTO) {
+        int page = pageInfoDTO.getPage();
+        int pageSize = pageInfoDTO.getPageSize();
+
+        if (pageSize > 100) {
+            return Result.clientError("pageSize should be less than 100");
+        }
+
+
+        return Result.success(dataService.getPagedData(page, pageSize));
     }
 
     @PostMapping("/insert")

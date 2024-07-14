@@ -1,10 +1,11 @@
 package cn.xuanzhi33.carprojectserver.service;
 
+import cn.xuanzhi33.carprojectserver.pojo.PagedSensorDataVO;
 import cn.xuanzhi33.carprojectserver.pojo.SensorData;
 
 import java.util.List;
 
 public interface SensorDataService {
-    List<SensorData> getData();
+    PagedSensorDataVO getPagedData(int page, int pageSize);
     int insertData(SensorData sensorData);
 }

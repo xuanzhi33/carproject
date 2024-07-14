@@ -12,6 +12,13 @@ public interface SensorDataMapper {
     @Select("select * from sensor_data")
     List<SensorData> getData();
 
+    @Select("select * from sensor_data limit #{limit} offset #{offset}")
+    List<SensorData> getDataByPage(int limit, int offset);
+
+    // 获取总数
+    @Select("select count(*) from sensor_data")
+    int getTotal();
+
     @Insert("insert into sensor_data(user, data) values(#{user}, #{data})")
     int insertData(SensorData sensorData);
 }
