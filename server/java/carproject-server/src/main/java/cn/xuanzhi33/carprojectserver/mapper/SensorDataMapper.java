@@ -12,7 +12,7 @@ public interface SensorDataMapper {
     @Select("select * from sensor_data")
     List<SensorData> getData();
 
-    @Select("select * from sensor_data limit #{limit} offset #{offset}")
+    @Select("select * from sensor_data order by id desc limit #{limit} offset #{offset}")
     List<SensorData> getDataByPage(int limit, int offset);
 
     // 获取总数

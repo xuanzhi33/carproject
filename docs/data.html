@@ -65,8 +65,8 @@
           <tbody>
 
             <template v-if="loading">
-              <tr>
-                <td colspan="4" class="text-center">
+              <tr v-for="i in pageSize">
+                <td colspan="4">
                   <span class="spinner-border spinner-border-sm"></span>
                   Loading...
                 </td>
@@ -98,7 +98,18 @@
 
           </tbody>
         </table>
-        <a href="#" @click.prevent="getData">Refresh</a>
+        <div class="clear-fix mb-5">
+          <div class="float-left">
+            <a href="#" @click.prevent="getData">Refresh</a>
+          </div>
+          <div class="float-right">
+            Page
+            <select v-model="page">
+              <option v-for="i in totalPage">{{ i }}</option>
+            </select>
+          </div>
+        </div>
+
       </div>
       <br>
     </div>
@@ -114,11 +125,24 @@
       data() {
         return {
           data: [],
-          loading: true
+          loading: true,
+          pageSize: 10,
+          page: 1,
+          total: 0
         }
       },
       async mounted() {
         await this.getData();
+      },
+      computed: {
+        totalPage() {
+          return Math.ceil(this.total / this.pageSize);
+        }
+      },
+      watch: {
+        page() {
+          this.getData();
+        }
       },
       methods: {
         async getData() {
@@ -129,13 +153,15 @@
               "Content-Type": "application/json"
             },
             body: JSON.stringify({
-              page: 1,
-              perPage: 1000
+              page: this.page,
+              pageSize: this.pageSize
             })
           });
           const data = await res.json();
           if (data.code == 200) {
-            this.data = data.data;
+            const records = data.data;
+            this.data = records.data;
+            this.total = records.total;
           } else {
             alert("Error");
           }
