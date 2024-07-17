@@ -43,7 +43,7 @@
 
   <template id="main">
     <div class="card glass"> <br>
-      <div class="container">
+      <div class="container" v-if="isLogin">
         <h1 class="text-center">Data</h1>
         <table class="table mt-3">
           <thead>
@@ -100,7 +100,9 @@
         </table>
         <div class="clear-fix mb-5">
           <div class="float-left">
-            <a href="#" @click.prevent="getData">Refresh</a>
+            <a href="#" @click.prevent="getData">Refresh</a>&nbsp;
+            <a href="#" @click.prevent="logout">Logout</a>&nbsp;
+            User: {{ username }}
           </div>
           <div class="float-right">
             Page
@@ -111,10 +113,33 @@
         </div>
 
       </div>
+      <div class="container" v-else>
+        <h1 class="text-center">Data</h1>
+        <p>Please login first.</p>
+        <button class="btn btn-success btn-block" @click="login" :disabled="gotoLogin">
+          <span class="spinner-border spinner-border-sm" v-if="gotoLogin"></span>
+          Login
+        </button>
+      </div>
       <br>
     </div>
   </template>
 
+  <script>
+    const urlParam = name => {
+      const serchParams = new URLSearchParams(window.location.search);
+      return serchParams.get(name);
+    }
+
+    if (urlParam("username")) {
+      const token = {
+        username: urlParam("username"),
+        token: urlParam("ticket")
+      }
+      sessionStorage.setItem("x-token", JSON.stringify(token));
+      history.replaceState(null, "", location.href.split("?")[0]);
+    }
+  </script>
   <script src="https://www.xuanzhi33.cn/js/global.v2.js"></script>
   <script src="https://unpkg.zhimg.com/vue@3/dist/vue.global.prod.js"></script>
   <script type="module">
@@ -126,12 +151,22 @@
         return {
           data: [],
           loading: true,
+          gotoLogin: false,
           pageSize: 10,
           page: 1,
-          total: 0
+          total: 0,
+          isLogin: true,
+          username: "",
+          token: ""
         }
       },
       async mounted() {
+        if (!this.checkToken()) return;
+
+        const creds = JSON.parse(sessionStorage.getItem("x-token"));
+        this.username = creds.username;
+        this.token = creds.token;
+
         await this.getData();
       },
       computed: {
@@ -145,12 +180,31 @@
         }
       },
       methods: {
+        login() {
+          this.gotoLogin = true;
+          location.href = "https://api.xuanzhi33.cn/v1/usersystem/?appname=Car%20Project&from=https://gh.xuanzhi33.cn/carproject/data.html";
+        },
+        logout() {
+          sessionStorage.removeItem("x-token");
+          this.isLogin = false;
+        },
+        checkToken() {
+          const token = sessionStorage.getItem("x-token");
+          if (!token) {
+            this.isLogin = false;
+            return false;
+          }
+
+          return true;
+        },
         async getData() {
           this.loading = true;
           const res = await fetch("https://s.x-33.top/carproject/api/get", {
             method: "POST",
             headers: {
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
+              "xuanzhi33-name": this.username,
+              "xuanzhi33-token": this.token
             },
             body: JSON.stringify({
               page: this.page,
@@ -162,6 +216,8 @@
             const records = data.data;
             this.data = records.data;
             this.total = records.total;
+          } else if (data.code == 401) {
+            this.logout();
           } else {
             alert("Error");
           }
