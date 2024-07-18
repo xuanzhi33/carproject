@@ -32,8 +32,9 @@ jobs:
             ${{ runner.os }}-gradle
 
       - name: Build with Gradle
+        run: ./gradlew build
         working-directory: ./Android-app
-        run: ./gradlew assembleRelease
+        
 
       - name: Upload APK
         uses: actions/upload-artifact@v2
