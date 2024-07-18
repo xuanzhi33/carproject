@@ -21,7 +21,12 @@ public class LoginInterceptor implements HandlerInterceptor {
             @NonNull HttpServletResponse response,
             @NonNull Object handler
     ) throws Exception {
-        String username = request.getHeader("xuanzhi33-username");
+        String method = request.getMethod();
+        if (method.equals("OPTIONS")) {
+            return true;
+        }
+
+        String username = request.getHeader("xuanzhi33-user");
         String token = request.getHeader("xuanzhi33-token");
         if ((!StringUtils.hasLength(username)) || (!StringUtils.hasLength(token))) {
             throw new UnauthorizedException("Unauthorized");
