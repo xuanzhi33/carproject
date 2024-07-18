@@ -26,8 +26,8 @@ public class LoginInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        String username = request.getHeader("xuanzhi33-user");
-        String token = request.getHeader("xuanzhi33-token");
+        String username = request.getHeader("Xuanzhi33-User");
+        String token = request.getHeader("Xuanzhi33-Token");
         if ((!StringUtils.hasLength(username)) || (!StringUtils.hasLength(token))) {
             throw new UnauthorizedException("Unauthorized");
         }
