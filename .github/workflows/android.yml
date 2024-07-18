@@ -31,11 +31,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle
 
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./Android-app/gradlew
+      
       - name: Build with Gradle
         run: ./gradlew build
         working-directory: ./Android-app
         
-
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
