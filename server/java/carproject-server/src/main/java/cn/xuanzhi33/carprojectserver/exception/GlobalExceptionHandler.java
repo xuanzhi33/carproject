@@ -16,16 +16,20 @@ public class GlobalExceptionHandler {
         return Result.serverError(e.getMessage());
     }
     @ExceptionHandler(NoResourceFoundException.class)
-    public  ResponseEntity<Result<String>> handleNoResourceFoundException(NoResourceFoundException e) {
+    public ResponseEntity<Result<String>> handleNoResourceFoundException(NoResourceFoundException e) {
         return new ResponseEntity<>(Result.error(404, "Not Found"), HttpStatus.NOT_FOUND);
     }
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler({MethodArgumentNotValidException.class, IllegalArgumentException.class})
     public ResponseEntity<Result<String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        Result<String> res = Result.clientError(e.getMessage());
         FieldError fieldError = e.getFieldError();
-        Result<String> res = Result.clientError("Invalid Request");
         if (fieldError != null) {
             res = Result.clientError(fieldError.getDefaultMessage());
         }
         return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<Result<String>> handleUnauthorizedException(UnauthorizedException e) {
+        return new ResponseEntity<>(Result.error(401, e.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 }

@@ -31,12 +31,11 @@ public class SensorDataController {
 
     @PostMapping("/insert")
     @CrossOrigin(origins = "*")
-    public Result<Integer> insertData(@RequestBody SensorDataDTO sensorDataDTO) {
+    public Result<Integer> insertData(@Valid @RequestBody SensorDataDTO sensorDataDTO) {
         // Convert SensorDataDTO to SensorData
         // Copy properties from sensorDataDTO to sensorData
         SensorData sensorData = new SensorData();
         BeanUtils.copyProperties(sensorDataDTO, sensorData);
-        System.out.println(sensorData);
         int lines = dataService.insertData(sensorData);
         return Result.success(lines);
     }
