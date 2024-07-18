@@ -136,7 +136,7 @@
         username: urlParam("username"),
         token: urlParam("ticket")
       }
-      sessionStorage.setItem("x-token", JSON.stringify(token));
+      localStorage.setItem("x-token", JSON.stringify(token));
       history.replaceState(null, "", location.href.split("?")[0]);
     }
   </script>
@@ -163,7 +163,7 @@
       async mounted() {
         if (!this.checkToken()) return;
 
-        const creds = JSON.parse(sessionStorage.getItem("x-token"));
+        const creds = JSON.parse(localStorage.getItem("x-token"));
         this.username = creds.username;
         this.token = creds.token;
 
@@ -185,11 +185,11 @@
           location.href = "https://api.xuanzhi33.cn/v1/usersystem/?appname=Car%20Project&from=https://gh.xuanzhi33.cn/carproject/data.html";
         },
         logout() {
-          sessionStorage.removeItem("x-token");
+          localStorage.removeItem("x-token");
           this.isLogin = false;
         },
         checkToken() {
-          const token = sessionStorage.getItem("x-token");
+          const token = localStorage.getItem("x-token");
           if (!token) {
             this.isLogin = false;
             return false;
