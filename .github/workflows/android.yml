@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      -'Android-app/**'
+      - 'Android-app/**'
 
 jobs:
   build:
