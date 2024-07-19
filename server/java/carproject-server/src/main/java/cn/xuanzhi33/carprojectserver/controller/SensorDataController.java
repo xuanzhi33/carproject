@@ -21,7 +21,7 @@ public class SensorDataController {
     }
 
     @PostMapping("/get")
-    @CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "https://gh.xuanzhi33.cn")
     public Result<PagedSensorDataVO> getData(@Valid @RequestBody PageInfoDTO pageInfoDTO) {
         int page = pageInfoDTO.getPage();
         int pageSize = pageInfoDTO.getPageSize();
@@ -30,7 +30,7 @@ public class SensorDataController {
     }
 
     @PostMapping("/insert")
-    @CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "https://gh.xuanzhi33.cn")
     public Result<Integer> insertData(@Valid @RequestBody SensorDataDTO sensorDataDTO) {
         // Convert SensorDataDTO to SensorData
         // Copy properties from sensorDataDTO to sensorData

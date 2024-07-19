@@ -10,10 +10,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.util.List;
+
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
     @Value("${carproject.hmac-key}")
     private String hmacKey;
+
+    @Value("${carproject.allowlist}")
+    private List<String> allowlist;
 
     @Override
     public boolean preHandle(
@@ -32,10 +37,14 @@ public class LoginInterceptor implements HandlerInterceptor {
             throw new UnauthorizedException("Unauthorized");
         }
 
-        if (Hmac.verifyHMAC(username, hmacKey, token)) {
-            return true;
-        } else {
+        if (!Hmac.verifyHMAC(username, hmacKey, token)) {
             throw new UnauthorizedException("Token is invalid");
         }
+
+        if (!allowlist.contains(username)) {
+            throw new UnauthorizedException("User is not allowed");
+        }
+
+        return true;
     }
 }
