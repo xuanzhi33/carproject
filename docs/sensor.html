@@ -153,7 +153,11 @@
 
           </div>
           <div v-else>
-            <p>
+            <div v-if="isIOS">
+              You are using an iOS device. Please click the button below to enable the required sensors.
+              <button class="btn btn-success btn-block mt-2" @click="requestPermission">Click Me</button>
+            </div>
+            <p v-else>
               This device does not support the required sensors. Please <span @click="supported = true">try</span> on a
               mobile device.
             </p>
@@ -181,22 +185,15 @@
           recording: false,
           gps: { longitude: 0, latitude: 0, speed: 0 },
           uploading: false,
-          showAdvanced: false
+          showAdvanced: false,
+          isIOS: false
         };
       },
       mounted() {
-        window.addEventListener('devicemotion', this.handleDeviceMotion);
-        window.addEventListener('deviceorientation', this.handleDeviceOrientation);
-        if (navigator.geolocation) {
-          navigator.geolocation.watchPosition((position) => {
-            this.gps = position.coords;
-          }, (error) => {
-            console.error(error);
-          }, {
-            enableHighAccuracy: true, // 高精度
-            timeout: 5000,
-            maximumAge: 0 // 0表示不使用缓存
-          });
+        if (typeof DeviceMotionEvent.requestPermission === 'function') {
+          this.isIOS = true;
+        } else {
+          this.sensorInit();
         }
 
         navigator.serviceWorker.register('./assets/sw.js');
@@ -208,6 +205,30 @@
         }
       },
       methods: {
+        requestPermission() {
+          DeviceMotionEvent.requestPermission().then((response) => {
+            if (response === 'granted') {
+              this.sensorInit();
+            } else {
+              alert('Permission denied. Please try again.');
+            }
+          });
+        },
+        sensorInit() {
+          window.addEventListener('devicemotion', this.handleDeviceMotion);
+          window.addEventListener('deviceorientation', this.handleDeviceOrientation);
+          if (navigator.geolocation) {
+            navigator.geolocation.watchPosition((position) => {
+              this.gps = position.coords;
+            }, (error) => {
+              console.error(error);
+            }, {
+              enableHighAccuracy: true, // 高精度
+              timeout: 5000,
+              maximumAge: 0 // 0表示不使用缓存
+            });
+          }
+        },
         handleDeviceMotion(event) {
           if (!event.accelerationIncludingGravity.x || !event.rotationRate.alpha) return;
           this.supported = true;
