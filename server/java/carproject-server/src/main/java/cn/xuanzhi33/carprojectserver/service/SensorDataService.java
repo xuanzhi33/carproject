@@ -9,4 +9,6 @@ public interface SensorDataService {
     Integer insertData(SensorData sensorData);
 
     Integer deleteData(int id);
+
+    Integer renameData(int id, String newName);
 }

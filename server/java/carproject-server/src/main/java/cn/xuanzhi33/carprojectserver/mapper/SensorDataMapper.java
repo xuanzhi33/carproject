@@ -1,10 +1,7 @@
 package cn.xuanzhi33.carprojectserver.mapper;
 
 import cn.xuanzhi33.carprojectserver.pojo.SensorData;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -25,4 +22,7 @@ public interface SensorDataMapper {
 
     @Delete("delete from sensor_data where id = #{id}")
     int deleteData(int id);
+
+    @Update("update sensor_data set user = #{newName} where id = #{id}")
+    int renameData(int id, String newName);
 }

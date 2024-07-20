@@ -37,4 +37,9 @@ public class SensorDataServiceImpl implements SensorDataService {
     public Integer deleteData(int id) {
         return dataMapper.deleteData(id);
     }
+
+    @Override
+    public Integer renameData(int id, String newName) {
+        return dataMapper.renameData(id, newName);
+    }
 }

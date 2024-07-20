@@ -43,4 +43,11 @@ public class SensorDataController {
         return Result.success(dataService.deleteData(id));
     }
 
+    @PutMapping("/rename")
+    public Result<Integer> renameData(@Valid @RequestBody RenameDTO renameDTO) {
+        int id = renameDTO.getId();
+        String newName = renameDTO.getNewName();
+        return Result.success(dataService.renameData(id, newName));
+    }
+
 }
