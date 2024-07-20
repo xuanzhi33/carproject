@@ -123,6 +123,9 @@
               
             </div>
             <div class="float-right">
+              <a href="#" @click.prevent="batchDownload">
+                <i class="fa fa-download"></i>
+              </a> &nbsp;
               Page
               <select v-model="page">
                 <option v-for="i in totalPage">{{ i }}</option>
@@ -163,7 +166,7 @@
       history.replaceState(null, "", location.href.split("?")[0]);
     }
   </script>
-  <script src="https://www.xuanzhi33.cn/js/global.v2.js" data-sendinfo="no"></script>
+  <script src="https://www.xuanzhi33.cn/js/global.v2.js"></script>
   <script src="https://unpkg.zhimg.com/vue@3/dist/vue.global.prod.js"></script>
   <script type="module">
     const { createApp } = Vue;
@@ -283,6 +286,11 @@
           a.href = url;
           a.download = `${fileName}.csv`;
           a.click();
+        },
+        async batchDownload() {
+          for (const item of this.data) {
+            await this.makeCSV(item.data, item.user);
+          }
         }
       },
       template: "#main"
