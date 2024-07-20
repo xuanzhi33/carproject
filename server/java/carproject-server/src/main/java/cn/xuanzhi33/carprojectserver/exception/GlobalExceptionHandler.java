@@ -6,30 +6,35 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Result<String>> handleException(Exception e) {
-        return new ResponseEntity<>(Result.serverError(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+    public Result<String> handleException(Exception e) {
+        return Result.serverError(e.getMessage());
     }
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<Result<String>> handleNoResourceFoundException(NoResourceFoundException e) {
-        return new ResponseEntity<>(Result.error(404, "Not Found"), HttpStatus.NOT_FOUND);
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Result<String> handleNoResourceFoundException(NoResourceFoundException e) {
+        return Result.error(404, "Not Found");
     }
     @ExceptionHandler({MethodArgumentNotValidException.class, IllegalArgumentException.class})
-    public ResponseEntity<Result<String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         Result<String> res = Result.clientError(e.getMessage());
         FieldError fieldError = e.getFieldError();
         if (fieldError != null) {
             res = Result.clientError(fieldError.getDefaultMessage());
         }
-        return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+        return res;
     }
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<Result<String>> handleUnauthorizedException(UnauthorizedException e) {
-        return new ResponseEntity<>(Result.error(401, e.getMessage()), HttpStatus.UNAUTHORIZED);
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Result<String> handleUnauthorizedException(UnauthorizedException e) {
+        return Result.error(401, e.getMessage());
     }
 }
