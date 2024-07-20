@@ -9,6 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Data</title>
   <link href="https://unpkg.zhimg.com/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="https://www.xuanzhi33.cn/css/x-az.css" rel="stylesheet">
   <link rel="icon" href="https://www.xuanzhi33.cn/favicon.ico">
   <style>
@@ -21,6 +23,10 @@
     .v-leave-to {
       opacity: 0;
       transform: translateY(50px);
+    }
+
+    .table td, .table th {
+      padding: 0.25rem;
     }
   </style>
   <script>
@@ -43,83 +49,100 @@
 
   <template id="main">
     <div class="card glass"> <br>
-      <div class="container" v-if="isLogin">
-        <h1 class="text-center">Data</h1>
-        <table class="table mt-3">
-          <thead>
-            <tr>
-              <th>
-                ID
-              </th>
-              <th>
-                Name
-              </th>
-              <th>
-                Date
-              </th>
-              <th>
-                Excel
-              </th>
-            </tr>
-          </thead>
-          <tbody>
+      <div class="container">
+        <h1 class="text-center">
+          <i class="fa fa-database"></i>
+          Data Manage
+          <i class="fa fa-refresh fa-spin" v-if="loading"></i>
+        </h1>
+        <div v-if="isLogin">
 
-            <template v-if="loading">
-              <tr v-for="i in pageSize">
-                <td colspan="4">
-                  <span class="spinner-border spinner-border-sm"></span>
-                  Loading...
-                </td>
-              </tr>
-            </template>
-            <template v-else-if="data.length == 0">
+          <table class="table mt-3 table-hover">
+            <thead>
               <tr>
-                <td colspan="4" class="text-center">
-                  No data
-                </td>
+                <th>
+                  ID
+                </th>
+                <th>
+                  Name
+                </th>
+                <th>
+                  Date
+                </th>
+                <th>
+                  Action
+                </th>
               </tr>
-            </template>
-            <template v-else>
-              <tr v-for="item in data">
-                <td>
-                  {{ item.id }}
-                </td>
-                <td>
-                  {{ item.user }}
-                </td>
-                <td>
-                  {{ item.createTime }}
-                </td>
-                <td>
-                  <a href="#" @click.prevent="makeCSV(item.data, item.user)">Download</a>
-                </td>
-              </tr>
-            </template>
+            </thead>
+            <tbody>
+              <template v-if="data.length == 0">
+                <tr>
+                  <td colspan="4" class="text-center">
+                    <i class="fa fa-minus-circle"></i>
+                    No data
+                  </td>
+                </tr>
+              </template>
+              <template v-else>
+                <tr v-for="item in data">
+                  <td>
+                    {{ item.id }}
+                  </td>
+                  <td>
+                    {{ item.user }}
+                    <a href="#" @click.prevent="rename(item)" title="Rename">
+                      <i class="fa fa-edit"></i>
+                    </a>
+                  </td>
+                  <td>
+                    {{ item.createTime }}
+                  </td>
+                  <td>
+                    <a href="#" @click.prevent="makeCSV(item.data, item.user)">
+                      <i class="fa fa-download"></i>
+                    </a> &nbsp;
+                    <a href="#" @click.prevent="delData(item)">
+                      <i class="fa fa-trash"></i>
+                    </a>
+                  </td>
+                </tr>
+              </template>
 
-          </tbody>
-        </table>
-        <div class="clear-fix mb-5">
-          <div class="float-left">
-            <a href="#" @click.prevent="getData">Refresh</a>&nbsp;
-            <a href="#" @click.prevent="logout">Logout</a>&nbsp;
-            User: {{ username }}
+            </tbody>
+          </table>
+          <div class="clear-fix mb-5">
+            <div class="float-left">
+              <a href="#" @click.prevent="getData">
+                <i class="fa fa-refresh"></i>
+              </a>&emsp;
+              <i class="fa fa-user"></i>
+              {{ username }}&nbsp;
+              <a href="#" @click.prevent="logout">
+                <i class="fa fa-sign-out"></i>
+              </a>&nbsp;
+              
+            </div>
+            <div class="float-right">
+              Page
+              <select v-model="page">
+                <option v-for="i in totalPage">{{ i }}</option>
+              </select>
+            </div>
           </div>
-          <div class="float-right">
-            Page
-            <select v-model="page">
-              <option v-for="i in totalPage">{{ i }}</option>
-            </select>
-          </div>
+
         </div>
-
-      </div>
-      <div class="container" v-else>
-        <h1 class="text-center">Data</h1>
-        <p>Please login first.</p>
-        <button class="btn btn-success btn-block" @click="login" :disabled="gotoLogin">
-          <span class="spinner-border spinner-border-sm" v-if="gotoLogin"></span>
-          Login
-        </button>
+        <div v-else>
+          <p v-if="loginErr">
+            <i class="fa fa-exclamation-triangle"></i>
+            You have no permission to access this page. Please login again.
+          </p>
+          <p v-else>Please login first.</p>
+          <button class="btn btn-success btn-block" @click="login" :disabled="gotoLogin">
+            <span class="spinner-border spinner-border-sm" v-if="gotoLogin"></span>
+            <i class="fa fa-sign-in"></i>
+            Login
+          </button>
+        </div>
       </div>
       <br>
     </div>
@@ -140,7 +163,7 @@
       history.replaceState(null, "", location.href.split("?")[0]);
     }
   </script>
-  <script src="https://www.xuanzhi33.cn/js/global.v2.js"></script>
+  <script src="https://www.xuanzhi33.cn/js/global.v2.js" data-sendinfo="no"></script>
   <script src="https://unpkg.zhimg.com/vue@3/dist/vue.global.prod.js"></script>
   <script type="module">
     const { createApp } = Vue;
@@ -150,8 +173,9 @@
       data() {
         return {
           data: [],
-          loading: true,
+          loading: false,
           gotoLogin: false,
+          loginErr: false,
           pageSize: 10,
           page: 1,
           total: 0,
@@ -197,31 +221,58 @@
 
           return true;
         },
-        async getData() {
+        async ajax(method, path, body) {
+          const url = "https://s.x-33.top/carproject" + path;
           this.loading = true;
-          const res = await fetch("https://s.x-33.top/carproject/api/get", {
-            method: "POST",
+          const res = await fetch(url, {
+            method,
             headers: {
               "Content-Type": "application/json",
               "Xuanzhi33-User": this.username,
               "Xuanzhi33-Token": this.token
             },
-            body: JSON.stringify({
-              page: this.page,
-              pageSize: this.pageSize
-            })
+            body: JSON.stringify(body)
           });
           const data = await res.json();
+          this.loading = false;
           if (data.code == 200) {
-            const records = data.data;
-            this.data = records.data;
-            this.total = records.total;
+            return data.data;
           } else if (data.code == 401) {
+            this.loginErr = true;
             this.logout();
           } else {
-            alert("Error");
+            alert(data.message);
           }
-          this.loading = false;
+        },
+        async getData() {
+          const res = await this.ajax("POST", "/api/get", {
+            page: this.page,
+            pageSize: this.pageSize
+          });
+          if (!res) return;
+
+          this.data = res.data;
+          this.total = res.total;
+        },
+        async rename(item) {
+          const newName = prompt("Please enter the new name:", item.user);
+          if (!newName) return;
+
+          const res = await this.ajax("PUT", "/api/rename", {
+            id: item.id,
+            newName
+          });
+          if (!res) return;
+
+          this.getData();
+        },
+        async delData(item) {
+          if (!confirm(`Are you sure to delete "${item.user}" (id: ${item.id})?`)) return;
+
+          const res = await this.ajax("DELETE", "/api/delete/" + item.id, {});
+          if (!res) return;
+
+          this.getData();
         },
         async makeCSV(textData, fileName) {
           const records = JSON.parse(textData);
