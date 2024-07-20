@@ -29,7 +29,12 @@ public class SensorDataServiceImpl implements SensorDataService {
     }
 
     @Override
-    public int insertData(SensorData sensorData) {
+    public Integer insertData(SensorData sensorData) {
         return dataMapper.insertData(sensorData);
+    }
+
+    @Override
+    public Integer deleteData(int id) {
+        return dataMapper.deleteData(id);
     }
 }

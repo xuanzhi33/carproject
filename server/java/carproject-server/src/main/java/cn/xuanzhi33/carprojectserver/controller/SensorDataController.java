@@ -38,4 +38,9 @@ public class SensorDataController {
         return Result.success(lines);
     }
 
+    @DeleteMapping("/delete/{id}")
+    public Result<Integer> deleteData(@PathVariable int id) {
+        return Result.success(dataService.deleteData(id));
+    }
+
 }
