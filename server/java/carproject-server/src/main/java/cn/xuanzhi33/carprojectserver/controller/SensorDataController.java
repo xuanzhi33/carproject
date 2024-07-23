@@ -6,7 +6,6 @@ import cn.xuanzhi33.carprojectserver.service.SensorDataService;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -22,32 +21,35 @@ public class SensorDataController {
 
     @PostMapping("/get")
     public Result<PagedSensorDataVO> getData(@Valid @RequestBody PageInfoDTO pageInfoDTO) {
-        int page = pageInfoDTO.getPage();
-        int pageSize = pageInfoDTO.getPageSize();
+        long page = pageInfoDTO.getPage();
+        long pageSize = pageInfoDTO.getPageSize();
 
         return Result.success(dataService.getPagedData(page, pageSize));
     }
 
     @PostMapping("/insert")
-    public Result<Integer> insertData(@Valid @RequestBody SensorDataDTO sensorDataDTO) {
+    public Result<Boolean> insertData(@Valid @RequestBody SensorDataDTO sensorDataDTO) {
         // Convert SensorDataDTO to SensorData
         // Copy properties from sensorDataDTO to sensorData
         SensorData sensorData = new SensorData();
         BeanUtils.copyProperties(sensorDataDTO, sensorData);
-        int lines = dataService.insertData(sensorData);
-        return Result.success(lines);
+        Boolean res = dataService.save(sensorData);
+        return Result.success(res);
     }
 
     @DeleteMapping("/delete/{id}")
-    public Result<Integer> deleteData(@PathVariable int id) {
-        return Result.success(dataService.deleteData(id));
+    public Result<Boolean> deleteData(@PathVariable long id) {
+        return Result.success(dataService.removeById(id));
     }
 
     @PutMapping("/rename")
-    public Result<Integer> renameData(@Valid @RequestBody RenameDTO renameDTO) {
-        int id = renameDTO.getId();
+    public Result<Boolean> renameData(@Valid @RequestBody RenameDTO renameDTO) {
+        long id = renameDTO.getId();
         String newName = renameDTO.getNewName();
-        return Result.success(dataService.renameData(id, newName));
+        SensorData sensorData = new SensorData();
+        sensorData.setId(id);
+        sensorData.setUser(newName);
+        return Result.success(dataService.updateById(sensorData));
     }
 
 }

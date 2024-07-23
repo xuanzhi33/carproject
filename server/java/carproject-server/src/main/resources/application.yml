@@ -4,9 +4,11 @@ spring:
   profiles:
     include: db
 
-mybatis:
-  configuration:
-    map-underscore-to-camel-case: true
 
 server:
   port: 13467
+
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto

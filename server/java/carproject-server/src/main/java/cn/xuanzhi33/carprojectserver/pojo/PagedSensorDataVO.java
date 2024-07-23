@@ -6,8 +6,8 @@ import java.util.List;
 
 @Data
 public class PagedSensorDataVO {
-    private int page;
-    private int pageSize;
-    private int total;
+    private long page;
+    private long pageSize;
+    private long total;
     private List<SensorData> data;
 }
